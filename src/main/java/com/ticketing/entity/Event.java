@@ -1,5 +1,6 @@
 package com.ticketing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,9 +46,11 @@ public class Event {
     private Double basePrice;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
 }

@@ -24,6 +24,14 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // Проверяем, не загружены ли уже данные
+        if (eventRepository.count() > 0) {
+            System.out.println("Data already initialized, skipping...");
+            return;
+        }
+        
+        System.out.println("Initializing data...");
+        
         Event event1 = new Event();
         event1.setName("Rock Concert 2025");
         event1.setDescription("An amazing rock concert featuring top bands");
@@ -84,6 +92,8 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         seatRepository.saveAll(seats);
+        
+        System.out.println("Data initialization completed!");
     }
 
 }

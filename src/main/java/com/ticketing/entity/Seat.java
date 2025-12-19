@@ -1,5 +1,6 @@
 package com.ticketing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,9 +36,11 @@ public class Seat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnoreProperties({"seats", "orders"})
     private Event event;
 
     @OneToOne(mappedBy = "seat")
+    @JsonIgnoreProperties({"seat", "order"})
     private Ticket ticket;
 
     public enum SeatCategory {

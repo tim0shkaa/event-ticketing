@@ -22,6 +22,39 @@
 - ✅ Категории мест (VIP: +50%, STANDARD: базовая цена, ECONOMY: -30%)
 - ✅ Максимальная суммарная скидка ограничена 70%
 
+## Технологический стек
+
+- **Java 21**
+- **Spring Boot 3.2.0**
+- **Spring Data JPA / Hibernate**
+- **H2 Database** (in-memory)
+- **Gradle 8.5**
+- **Lombok**
+- **JUnit 5 + Mockito**
+
+## Структура проекта
+
+```
+event-ticketing/
+├── src/
+│   ├── main/
+│   │   ├── java/com/ticketing/
+│   │   │   ├── entity/          # Сущности JPA
+│   │   │   ├── repository/      # Spring Data репозитории
+│   │   │   ├── service/         # Бизнес-логика
+│   │   │   ├── controller/      # REST контроллеры
+│   │   │   ├── dto/             # Data Transfer Objects
+│   │   │   ├── exception/       # Обработка исключений
+│   │   │   ├── DataInitializer.java
+│   │   │   └── EventTicketingApplication.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/                    # Unit тесты
+├── build.gradle
+├── settings.gradle
+└── README.md
+```
+
 ## Модель данных
 
 ### Сущности и связи
@@ -152,7 +185,8 @@ curl http://localhost:8080/api/events
     "venue": "Central Stadium",
     "basePrice": 50.0,
     "totalSeats": 35,
-    "availableSeats": 35
+    "availableSeats": 35,
+    "seats": [...]
   }
 ]
 ```
@@ -215,6 +249,36 @@ curl -X POST http://localhost:8080/api/orders \
    - JDBC URL: `jdbc:h2:mem:ticketingdb`
    - User Name: `sa`
    - Password: (пусто)
+
+### SQL скрипты для проверки данных
+
+```sql
+-- Просмотр всех событий
+SELECT * FROM EVENTS;
+
+-- Просмотр всех мест
+SELECT * FROM SEATS;
+
+-- Просмотр доступных мест для события
+SELECT * FROM SEATS WHERE EVENT_ID = 1 AND AVAILABLE = TRUE;
+
+-- Просмотр всех заказов
+SELECT * FROM ORDERS;
+
+-- Просмотр билетов в заказе
+SELECT * FROM TICKETS WHERE ORDER_ID = 1;
+
+-- Статистика по событию
+SELECT 
+    e.NAME as EVENT_NAME,
+    COUNT(s.ID) as TOTAL_SEATS,
+    SUM(CASE WHEN s.AVAILABLE = TRUE THEN 1 ELSE 0 END) as AVAILABLE_SEATS,
+    COUNT(o.ID) as TOTAL_ORDERS
+FROM EVENTS e
+LEFT JOIN SEATS s ON e.ID = s.EVENT_ID
+LEFT JOIN ORDERS o ON e.ID = o.EVENT_ID
+GROUP BY e.ID, e.NAME;
+```
 
 ## Тестирование
 
@@ -322,3 +386,12 @@ gradlew.bat test
 - Repository Pattern - для работы с БД
 - Service Layer Pattern - для бизнес-логики
 - Exception Handling - глобальная обработка ошибок
+
+## Автор
+
+Лабораторная работа по Spring Boot  
+Вариант 16 - Система бронирования билетов
+
+## Лицензия
+
+Учебный проект
